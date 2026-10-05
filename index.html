@@ -7,28 +7,24 @@
     <link rel="stylesheet" href="/src/style.css" />
     <title>Habit tracker</title>
   </head>
-  <body class="min-h-screen bg-bg-light text-text-light antialiased">
-    <div
-      class="mx-auto min-h-screen w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-10 lg:px-8"
-    >
+  <body class="min-h-screen bg-bg-light text-text-light">
+    <div class="mx-auto px-4 py-6 sm:px-6 sm:py-10 lg:px-8">
       <header
         id="person"
-        class="flex flex-col gap-5 rounded-3xl border border-amber-950/5 bg-surface-light p-5 shadow-sm sm:flex-row sm:items-center sm:gap-6 sm:p-8"
+        class="flex flex-row gap-5 rounded-4xl border border-amber-950/5 bg-surface-light p-5 shadow-sm"
       >
-        <img
-          src="./public/batman.jpg"
-          alt="Profile avatar"
-          class="h-24 w-24 shrink-0 rounded-2xl object-cover sm:h-28 sm:w-28"
-        />
-        <div class="min-w-0">
-          <p
-            class="mb-2 text-sm font-semibold uppercase tracking-[0.18em] text-primary-light"
-          >
+        <dev>
+          <img
+            src="./public/batman.jpg"
+            alt="profile"
+            class="h-24 w-24 rounded-2xl object-cover flex-1"
+          />
+        </dev>
+        <div>
+          <p class="mb-2 text-lg font-bold uppercase text-primary-light">
             personal dashboard
           </p>
-          <h1
-            class="break-words text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl"
-          >
+          <h1 class="text-2xl font-bold sm:text-3xl lg:text-4xl">
             Mohammad Hadi Alsous
           </h1>
           <p class="mt-2 text-sm leading-6 text-muted-light sm:text-base">
@@ -37,43 +33,34 @@
           <blockquote
             class="mt-4 border-l-2 border-amber-500 pl-3 text-sm italic text-muted-light"
           >
-            “The more sad, the more fun later.”
+            “The more work now, the more fun later.”
           </blockquote>
         </div>
       </header>
 
-      <main class="mt-8 sm:mt-10">
-        <section aria-labelledby="progress-heading">
-          <div
-            class="mb-5 flex flex-col gap-1 sm:mb-6 sm:flex-row sm:items-end sm:justify-between"
-          >
+      <!-- main contain section and the nav -->
+      <main class="mt-8">
+        <!-- the section contain the four divs -->
+        <section>
+          <div class="mb-5">
             <div>
-              <p class="text-sm font-medium text-primary-light">
-                Keep showing up
+              <p class="text-lg font-bold py-2 text-primary-light">
+                Keep showing up here's your progress
               </p>
-              <h2
-                id="progress-heading"
-                class="mt-1 text-2xl font-bold tracking-tight sm:text-3xl"
-              >
-                Your progress
-              </h2>
+              <p class="text-sm">Small steps big results</p>
             </div>
-            <p class="text-sm text-muted-light">Small steps add up.</p>
           </div>
 
-          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <article
+          <div class="grid gap-4 lg:grid-cols-3">
+            <dev
               id="coins"
-              class="relative isolate flex min-h-52 flex-col justify-between overflow-hidden rounded-2xl bg-slate-950 p-5 text-white shadow-sm sm:min-h-60 sm:p-6"
+              class="relative isolate flex min-h-52 flex-col justify-between overflow-hidden rounded-2xl bg-slate-950 p-5 text-white shadow-sm"
             >
               <img
                 src="./public/coins.jpg"
-                alt=""
+                alt="coins"
                 class="absolute inset-0 -z-20 h-full w-full object-cover opacity-65"
               />
-              <div
-                class="absolute inset-0 -z-10 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-slate-950/30"
-              ></div>
               <div class="flex items-start justify-between gap-3">
                 <h3 class="text-lg font-semibold">Coins</h3>
                 <span
@@ -82,28 +69,21 @@
                   Reward
                 </span>
               </div>
-              <p class="flex items-baseline gap-2">
-                <span
-                  data-coins="1"
-                  class="text-4xl font-bold tracking-tight sm:text-5xl"
-                  >1</span
-                >
+              <p>
+                <span data-coins="1" class="text-4xl font-bold">1</span>
                 <span class="text-sm text-white/75">earned</span>
               </p>
-            </article>
+            </dev>
 
-            <article
+            <dev
               id="golds"
-              class="relative isolate flex min-h-52 flex-col justify-between overflow-hidden rounded-2xl bg-amber-950 p-5 text-white shadow-sm sm:min-h-60 sm:p-6"
+              class="relative isolate flex min-h-52 flex-col justify-between overflow-hidden rounded-2xl bg-amber-950 p-5 text-white shadow-sm"
             >
               <img
                 src="./public/golds.jpg"
                 alt=""
-                class="absolute inset-0 -z-20 h-full w-full object-cover opacity-70"
+                class="absolute inset-0 -z-20 h-full w-full object-cover"
               />
-              <div
-                class="absolute inset-0 -z-10 bg-gradient-to-t from-amber-950/90 via-amber-950/15 to-amber-950/20"
-              ></div>
               <div class="flex items-start justify-between gap-3">
                 <h3 class="text-lg font-semibold">Gold</h3>
                 <span
@@ -112,75 +92,64 @@
                   Collection
                 </span>
               </div>
-              <p class="flex items-baseline gap-2">
-                <span
-                  data-golds="1"
-                  class="text-4xl font-bold tracking-tight sm:text-5xl"
-                  >1</span
-                >
+              <p>
+                <span data-golds="1" class="text-4xl font-bold">1</span>
                 <span class="text-sm text-white/75">collected</span>
               </p>
-            </article>
+            </dev>
 
-            <article
+            <dev
               id="streak"
-              class="relative isolate flex min-h-52 flex-col justify-between overflow-hidden rounded-2xl bg-slate-950 p-5 text-white shadow-sm sm:col-span-2 sm:min-h-60 sm:p-6 lg:col-span-1"
+              class="relative isolate flex min-h-52 flex-col justify-between overflow-hidden rounded-2xl bg-slate-950 p-5 text-white shadow-sm lg:col-span-1"
             >
               <img
                 src="./public/streak.jpg"
                 alt=""
                 class="absolute inset-0 -z-20 h-full w-full object-cover opacity-65"
               />
-              <div
-                class="absolute inset-0 -z-10 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-slate-950/30"
-              ></div>
               <div class="flex items-start justify-between gap-3">
-                <h3 class="text-lg font-semibold">Streak</h3>
+                <h3 class="text-lg font-bold">Streak</h3>
                 <span
-                  class="rounded-full bg-white/15 px-3 py-1 text-xs font-medium backdrop-blur-sm"
+                  class="rounded-full bg-white/15 px-3 py-1 text-xs backdrop-blur-sm"
                 >
                   Best effort
                 </span>
               </div>
               <p class="flex items-baseline gap-2">
-                <span
-                  data-streak="1"
-                  class="text-4xl font-bold tracking-tight sm:text-5xl"
-                  >1</span
-                >
+                <span data-streak="1" class="text-4xl font-bold">1</span>
                 <span class="text-sm text-white/75">day in a row</span>
               </p>
-            </article>
+            </dev>
           </div>
         </section>
 
         <nav
           id="links"
           aria-label="Main navigation"
-          class="mt-8 flex flex-wrap gap-3 rounded-2xl border border-amber-950/5 bg-surface-light p-4 shadow-sm sm:mt-10 sm:gap-4 sm:p-5"
+          class="mt-8 flex flex-wrap gap-3 rounded-2xl border border-amber-950/5 bg-surface-light p-4 shadow-sm"
         >
           <a
             href="./index.html"
             aria-current="page"
-            class="inline-flex min-h-11 flex-1 items-center justify-center rounded-xl bg-primary-light px-4 py-2 text-sm font-semibold text-white transition hover:bg-accent-light focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-light sm:flex-none"
+            class="flex min-h-11 flex-1 items-center justify-center rounded-xl bg-primary-light px-4 py-2 text-sm font-bold text-white transition hover:bg-amber-950 focus-visible:outline-primary-light"
           >
             Overview
           </a>
           <a
             href="./habits.html"
-            class="inline-flex min-h-11 flex-1 items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold text-muted-light transition hover:bg-amber-50 hover:text-text-light focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-light sm:flex-none"
+            class="flex min-h-11 flex-1 items-center justify-center rounded-xl px-4 py-2 text-sm font-bold text-muted-light transition hover:bg-amber-50 hover:text-text-light focus-visible:outline-primary-light"
           >
             Habits
           </a>
           <a
             href="./messions.html"
-            class="inline-flex min-h-11 flex-1 items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold text-muted-light transition hover:bg-amber-50 hover:text-text-light focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-light sm:flex-none"
+            class="flex min-h-11 flex-1 items-center justify-center rounded-xl px-4 py-2 text-sm font-bold text-muted-light transition hover:bg-amber-50 hover:text-text-light focus-visible:outline-primary-light"
           >
             Missions
           </a>
           <a
             href="./shop.html"
-            class="inline-flex min-h-11 flex-1 items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold text-muted-light transition hover:bg-amber-50 hover:text-text-light focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-light sm:flex-none"
+            class="flex min-h-11 flex-1 items-center justify-center rounded-xl px-4 py-2 text-sm font-bold text-muted-light transition hover:bg-amber-50 hover:text-text-light focus-visible:outline-primary-light"
           >
             Shop
           </a>
