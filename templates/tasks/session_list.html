@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1 class="text-2xl font-semibold text-ink mb-6">سجل الجلسات</h1>
+
+<div id="active-card" class="hidden mb-6 bg-surface border border-primary rounded-[14px] p-4 flex flex-wrap items-center justify-between gap-3">
+  <div class="min-w-0">
+    <div id="active-label" class="text-sm text-muted">جلسة تركيز جارية</div>
+    <div id="active-title" class="font-semibold text-ink truncate"></div>
+  </div>
+  <div class="flex items-center gap-3">
+    <span id="active-time" dir="ltr" class="text-2xl font-semibold text-primary">00:00</span>
+    <a id="active-link" href="#" class="inline-flex items-center justify-center h-11 px-5 rounded-[10px] bg-primary text-bg font-semibold hover:bg-primary-hover transition-colors focus-visible:ring-2 focus-visible:ring-primary">العودة إلى المؤقت</a>
+  </div>
+</div>
+
+<div class="bg-surface border border-line rounded-[14px] overflow-hidden">
+  <ul class="divide-y divide-line">
+    {% for row in rows %}
+      <li class="p-4 flex flex-wrap items-center justify-between gap-3">
+        <div class="min-w-0">
+          <div class="font-semibold text-ink truncate">{{ row.session.task.title }}</div>
+          <div class="text-sm text-muted">{{ row.session.started_at|date:"Y-m-d H:i" }}</div>
+        </div>
+        <span class="inline-flex items-center h-7 px-3 rounded-full border border-primary text-sm text-primary bg-bg">{{ row.duration }}</span>
+      </li>
+    {% empty %}
+      <li class="p-8 text-center">
+        <p class="text-ink font-semibold">لا توجد جلسات بعد</p>
+        <p class="text-sm text-muted mt-1">ابدأ جلسة تركيز من صفحة المهام.</p>
+      </li>
+    {% endfor %}
+  </ul>
+</div>
+{% include '_pagination.html' %}
+
+<script>
+  var card = document.getElementById('active-card');
+  var label = document.getElementById('active-label');
+  var title = document.getElementById('active-title');
+  var timeBox = document.getElementById('active-time');
+  var link = document.getElementById('active-link');
+
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+  function readActive() {
+    try { return JSON.parse(localStorage.getItem('df_active')); } catch (e) { return null; }
+  }
+
+  function update() {
+    var a = readActive();
+    if (!a) { card.classList.add('hidden'); return; }
+    card.classList.remove('hidden');
+    title.textContent = a.title;
+    if (a.url && a.url.indexOf('/') === 0) { link.href = a.url; }
+    var remaining = a.end - Date.now();
+    if (remaining <= 0) {
+      timeBox.textContent = '00:00';
+      label.textContent = 'انتهى الوقت، احفظ جلستك';
+      link.textContent = 'احفظ الجلسة';
+    } else {
+      var total = Math.ceil(remaining / 1000);
+      timeBox.textContent = pad(Math.floor(total / 60)) + ':' + pad(total % 60);
+      label.textContent = 'جلسة تركيز جارية';
+      link.textContent = 'العودة إلى المؤقت';
+    }
+  }
+
+  update();
+  setInterval(update, 1000);
+</script>
+{% endblock %}

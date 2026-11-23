@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+  <h1 class="text-2xl font-semibold text-ink">المهام</h1>
+  <a href="{% url 'task_create' %}" class="inline-flex items-center justify-center h-11 px-5 rounded-[10px] bg-primary text-bg font-semibold hover:bg-primary-hover transition-colors focus-visible:ring-2 focus-visible:ring-primary">مهمة جديدة</a>
+</div>
+
+<form method="get" class="bg-surface border border-line rounded-[14px] p-4 mb-6">
+  <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    <div class="form-field sm:col-span-2 lg:col-span-4">
+      <input type="text" name="q" value="{{ current_q }}" placeholder="ابحث بعنوان المهمة" aria-label="بحث">
+    </div>
+    <div class="form-field">
+      <select name="type" aria-label="النوع">
+        <option value="">كل الأنواع</option>
+        {% for value, label in type_choices %}
+          <option value="{{ value }}" {% if current_type == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-field">
+      <select name="priority" aria-label="الأولوية">
+        <option value="">كل الأولويات</option>
+        {% for value, label in priority_choices %}
+          <option value="{{ value }}" {% if current_priority == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-field">
+      <select name="status" aria-label="الحالة">
+        <option value="">كل الحالات</option>
+        {% for value, label in status_choices %}
+          <option value="{{ value }}" {% if current_status == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="flex gap-2">
+      <button type="submit" class="flex-1 inline-flex items-center justify-center h-11 rounded-[10px] bg-primary text-bg font-semibold hover:bg-primary-hover transition-colors focus-visible:ring-2 focus-visible:ring-primary">تطبيق</button>
+      <a href="{% url 'task_list' %}" class="inline-flex items-center justify-center h-11 px-4 rounded-[10px] border border-line text-ink hover:bg-surface-2 transition-colors">مسح</a>
+    </div>
+  </div>
+</form>
+
+<div class="flex flex-col gap-3">
+  {% for task in object_list %}
+    <article class="bg-surface border border-line rounded-[14px] p-4 flex flex-col sm:flex-row sm:items-center gap-4">
+      {% if task.image %}
+        <img src="{{ task.image.url }}" alt="" class="w-14 h-14 rounded-[10px] object-cover shrink-0">
+      {% else %}
+        <div class="w-14 h-14 rounded-[10px] bg-surface-2 text-primary-dark flex items-center justify-center text-xl font-semibold shrink-0">{{ task.title|first|upper }}</div>
+      {% endif %}
+
+      <div class="flex-1 min-w-0">
+        <h2 class="font-semibold text-ink truncate">{{ task.title }}</h2>
+        {% if task.description %}<p class="text-sm text-muted mt-0.5">{{ task.description|truncatechars:90 }}</p>{% endif %}
+        <div class="mt-2 flex flex-wrap gap-2">
+          <span class="inline-flex items-center h-6 px-2 rounded-full border text-xs bg-bg {% if task.task_type == 'deep' %}text-primary border-primary{% else %}text-muted border-line{% endif %}">{{ task.get_task_type_display }}</span>
+          <span class="inline-flex items-center h-6 px-2 rounded-full border text-xs bg-bg {% if task.priority == 'high' %}text-danger border-danger{% elif task.priority == 'medium' %}text-warning border-warning{% else %}text-success border-success{% endif %}">{{ task.get_priority_display }}</span>
+          <span class="inline-flex items-center h-6 px-2 rounded-full border text-xs bg-bg {% if task.status == 'done' %}text-success border-success{% elif task.status == 'doing' %}text-primary-dark border-primary{% else %}text-muted border-line{% endif %}">{{ task.get_status_display }}</span>
+        </div>
+      </div>
+<div class="flex flex-wrap gap-2">
+        <a href="{% url 'focus_start' task.pk %}" class="inline-flex items-center h-9 px-3 rounded-[10px] bg-primary text-bg text-sm font-semibold hover:bg-primary-hover transition-colors focus-visible:ring-2 focus-visible:ring-primary">تركيز</a>
+        <a href="{% url 'task_update' task.pk %}" class="inline-flex items-center h-9 px-3 rounded-[10px] border border-line text-sm text-ink hover:bg-surface-2 transition-colors">تعديل</a>
+        <a href="{% url 'task_delete' task.pk %}" class="inline-flex items-center h-9 px-3 rounded-[10px] border border-danger text-sm text-danger hover:bg-surface-2 transition-colors">حذف</a>
+      </div>
+    </article>
+  {% empty %}
+    <div class="bg-surface border border-line rounded-[14px] p-8 text-center">
+      <p class="text-ink font-semibold">لا توجد مهام هنا</p>
+      <p class="text-sm text-muted mt-1">أضف مهمتك الأولى وابدأ أول جلسة تركيز.</p>
+    </div>
+  {% endfor %}
+</div>
+
+{% include '_pagination.html' %}
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="text-center mb-6">
+  <div class="text-lg font-semibold text-primary-dark">DeepFocus</div>
+  <h1 class="mt-2 text-2xl font-semibold text-ink">إنشاء حساب</h1>
+  <p class="mt-1 text-sm text-muted">ابدأ بتنظيم عملك العميق</p>
+</div>
+<form method="post">
+  {% csrf_token %}
+  {% include '_form_fields.html' with form=form %}
+  <button type="submit" class="w-full inline-flex items-center justify-center h-11 rounded-[10px] bg-primary text-bg font-semibold hover:bg-primary-hover transition-colors focus-visible:ring-2 focus-visible:ring-primary">تسجيل</button>
+</form>
+<p class="mt-4 text-sm text-muted text-center">عندك حساب؟ <a href="{% url 'login' %}" class="text-primary underline">سجّل الدخول</a></p>
+{% endblock %}

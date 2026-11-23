@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1 class="text-2xl font-semibold text-ink mb-6">{% if object %}تعديل مهمة{% else %}مهمة جديدة{% endif %}</h1>
+<form method="post" enctype="multipart/form-data" class="bg-surface border border-line rounded-[14px] p-6 max-w-xl">
+  {% csrf_token %}
+  {% include '_form_fields.html' with form=form %}
+  <div class="flex flex-wrap gap-3 mt-2">
+    <button type="submit" class="inline-flex items-center justify-center h-11 px-5 rounded-[10px] bg-primary text-bg font-semibold hover:bg-primary-hover transition-colors focus-visible:ring-2 focus-visible:ring-primary">حفظ</button>
+    <a href="{% url 'task_list' %}" class="inline-flex items-center justify-center h-11 px-5 rounded-[10px] border border-line text-ink hover:bg-surface-2 transition-colors">إلغاء</a>
+  </div>
+</form>
+{% endblock %}

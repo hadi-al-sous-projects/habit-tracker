@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DeepFocus</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            bg: 'var(--bg)',
+            sidebar: 'var(--sidebar)',
+            surface: 'var(--surface)',
+            'surface-2': 'var(--surface-2)',
+            primary: 'var(--primary)',
+            'primary-hover': 'var(--primary-hover)',
+            'primary-light': 'var(--primary-light)',
+            'primary-dark': 'var(--primary-dark)',
+            ink: 'var(--text)',
+            muted: 'var(--text-muted)',
+            line: 'var(--border)',
+            success: 'var(--success)',
+            warning: 'var(--warning)',
+            danger: 'var(--danger)'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    :root {
+      --bg: #F5F5ED;
+      --sidebar: #E9EDE3;
+      --surface: #FFFFFF;
+      --surface-2: #F0F2EA;
+      --primary: #6F8B70;
+      --primary-hover: #58765C;
+      --primary-light: #DCE7D9;
+      --primary-dark: #354C3D;
+      --text: #202B23;
+      --text-muted: #758076;
+      --border: #E2E5DA;
+      --success: #5D9976;
+      --warning: #D8A34E;
+      --danger: #C87570;
+      --field-bg: #FFFFFF;
+      --field-border: #8A9A8B;
+    }
+
+    [data-theme="dark"] {
+      --bg: #17251E;
+      --sidebar: #1B2B22;
+      --surface: #203329;
+      --surface-2: #263C30;
+      --primary: #8EAB91;
+      --primary-hover: #A5BDA5;
+      --primary-light: #354D3B;
+      --primary-dark: #C5D8C0;
+      --text: #F0F3EB;
+      --text-muted: #A8B5A8;
+      --border: #34483A;
+      --success: #78B68B;
+      --warning: #E3B66B;
+      --danger: #DF8580;
+      --field-bg: #1A2A22;
+      --field-border: #6B8873;
+    }
+
+    .form-field input:not([type="checkbox"]):not([type="file"]),
+    .form-field select,
+    .form-field textarea {
+      width: 100%;
+      height: 44px;
+      padding: 0 12px;
+      border-radius: 10px;
+      border: 1px solid var(--field-border);
+      background: var(--field-bg);
+      color: var(--text);
+    }
+    .form-field textarea { height: 112px; padding: 8px 12px; }
+    .form-field input[type="file"] { color: var(--text-muted); font-size: 14px; }
+    .form-field input::placeholder, .form-field textarea::placeholder { color: var(--text-muted); }
+    .form-field a { color: var(--primary); text-decoration: underline; }
+    .form-field input:focus,
+    .form-field select:focus,
+    .form-field textarea:focus { outline: 2px solid var(--primary); outline-offset: 1px; }
+  </style>
+</head>
+<body class="bg-bg text-ink font-sans leading-relaxed">
+{% with name=request.resolver_match.url_name %}
+
+{% if user.is_authenticated %}
+<div class="md:flex min-h-screen">
+  <aside class="hidden md:flex md:flex-col md:w-[260px] shrink-0 bg-sidebar border-e border-line p-4">
+    <div class="text-lg font-semibold text-primary-dark px-3 py-4">DeepFocus</div>
+    <nav class="flex-1 flex flex-col">
+      <ul class="flex flex-col gap-1 flex-1">
+        <li><a href="{% url 'dashboard' %}" class="flex items-center h-11 px-3 rounded-[10px] text-sm transition-colors {% if name == 'dashboard' %}bg-primary-light text-primary-dark font-semibold{% else %}text-ink hover:bg-surface-2{% endif %}">لوحة التحكم</a></li>
+        <li><a href="{% url 'task_list' %}" class="flex items-center h-11 px-3 rounded-[10px] text-sm transition-colors {% if name == 'task_list' or name == 'task_create' or name == 'task_update' or name == 'task_delete' or name == 'focus_start' %}bg-primary-light text-primary-dark font-semibold{% else %}text-ink hover:bg-surface-2{% endif %}">المهام</a></li>
+        <li><a href="{% url 'session_list' %}" class="flex items-center h-11 px-3 rounded-[10px] text-sm transition-colors {% if name == 'session_list' %}bg-primary-light text-primary-dark font-semibold{% else %}text-ink hover:bg-surface-2{% endif %}">الجلسات</a></li>
+<li><a href="{% url 'profile' %}" class="flex items-center h-11 px-3 rounded-[10px] text-sm transition-colors {% if name == 'profile' or name == 'profile_edit' %}bg-primary-light text-primary-dark font-semibold{% else %}text-ink hover:bg-surface-2{% endif %}">الملف الشخصي</a></li>
+        <li class="mt-auto">
+          <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="w-full flex items-center h-11 px-3 rounded-[10px] text-sm text-start text-danger hover:bg-surface-2 transition-colors">خروج</button>
+          </form>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+
+  <div class="flex-1 min-w-0">
+    <header class="md:hidden bg-sidebar border-b border-line">
+      <details>
+        <summary class="flex items-center justify-between h-14 px-4 cursor-pointer list-none">
+          <span class="font-semibold text-primary-dark">DeepFocus</span>
+          <span class="text-sm text-muted">القائمة</span>
+        </summary>
+        <ul class="flex flex-col gap-1 p-2">
+          <li><a href="{% url 'dashboard' %}" class="flex items-center h-11 px-3 rounded-[10px] text-sm transition-colors {% if name == 'dashboard' %}bg-primary-light text-primary-dark font-semibold{% else %}text-ink hover:bg-surface-2{% endif %}">لوحة التحكم</a></li>
+          <li><a href="{% url 'task_list' %}" class="flex items-center h-11 px-3 rounded-[10px] text-sm transition-colors {% if name == 'task_list' or name == 'task_create' or name == 'task_update' or name == 'task_delete' or name == 'focus_start' %}bg-primary-light text-primary-dark font-semibold{% else %}text-ink hover:bg-surface-2{% endif %}">المهام</a></li>
+          <li><a href="{% url 'session_list' %}" class="flex items-center h-11 px-3 rounded-[10px] text-sm transition-colors {% if name == 'session_list' %}bg-primary-light text-primary-dark font-semibold{% else %}text-ink hover:bg-surface-2{% endif %}">الجلسات</a></li>
+          <li><a href="{% url 'profile' %}" class="flex items-center h-11 px-3 rounded-[10px] text-sm transition-colors {% if name == 'profile' or name == 'profile_edit' %}bg-primary-light text-primary-dark font-semibold{% else %}text-ink hover:bg-surface-2{% endif %}">الملف الشخصي</a></li>
+          <li>
+            <form method="post" action="{% url 'logout' %}">
+              {% csrf_token %}
+              <button type="submit" class="w-full flex items-center h-11 px-3 rounded-[10px] text-sm text-start text-danger hover:bg-surface-2 transition-colors">خروج</button>
+            </form>
+          </li>
+        </ul>
+      </details>
+    </header>
+    <main class="p-4 md:p-8">
+      <div class="max-w-5xl mx-auto">
+{% else %}
+<main class="min-h-screen flex items-center justify-center p-4">
+  <div class="w-full max-w-md bg-surface border border-line rounded-[14px] p-6">
+{% endif %}
+
+{% if messages %}
+  <div class="mb-4 flex flex-col gap-2">
+    {% for message in messages %}
+      <div role="alert" class="rounded-[10px] border bg-surface px-4 py-3 text-sm {% if message.tags == 'error' %}border-danger{% else %}border-success{% endif %}">{{ message }}</div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+{% block content %}{% endblock %}
+
+{% if user.is_authenticated %}
+      </div>
+    </main>
+  </div>
+</div>
+{% else %}
+  </div>
+</main>
+{% endif %}
+
+{% endwith %}
+</body>
+</html>

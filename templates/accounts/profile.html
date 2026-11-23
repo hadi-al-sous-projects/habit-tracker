@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1 class="text-2xl font-semibold text-ink mb-6">الملف الشخصي</h1>
+<div class="bg-surface border border-line rounded-[14px] p-6 flex flex-col sm:flex-row gap-6 items-center sm:items-start">
+  {% if profile.image %}
+    <img src="{{ profile.image.url }}" alt="" class="w-24 h-24 rounded-full object-cover shrink-0 border border-line">
+  {% else %}
+    <div class="w-24 h-24 rounded-full bg-primary-light text-primary-dark flex items-center justify-center text-4xl font-semibold shrink-0">{{ user.username|first|upper }}</div>
+  {% endif %}
+  <div class="flex-1 w-full text-center sm:text-start">
+    <div class="text-xl font-semibold text-ink">{{ user.first_name|default:user.username }}</div>
+    <div class="text-sm text-muted">@{{ user.username }}</div>
+    <dl class="mt-4 grid gap-3 text-sm">
+      <div>
+        <dt class="text-muted">الإيميل</dt>
+        <dd class="text-ink">{{ user.email|default:"غير محدد" }}</dd>
+      </div>
+      <div>
+        <dt class="text-muted">النبذة</dt>
+        <dd class="text-ink">{{ profile.bio|default:"لا توجد نبذة بعد" }}</dd>
+      </div>
+    </dl>
+    <a href="{% url 'profile_edit' %}" class="mt-5 inline-flex items-center justify-center h-11 px-5 rounded-[10px] bg-primary text-bg font-semibold hover:bg-primary-hover transition-colors focus-visible:ring-2 focus-visible:ring-primary">تعديل الملف</a>
+  </div>
+</div>
+{% endblock %}

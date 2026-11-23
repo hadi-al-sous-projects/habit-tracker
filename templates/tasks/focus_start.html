@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="max-w-md mx-auto bg-surface border border-line rounded-[14px] p-6 text-center">
+  <h1 class="text-xl font-semibold text-ink">{{ task.title }}</h1>
+  <span class="mt-2 inline-flex items-center h-6 px-2 rounded-full border text-xs bg-bg {% if task.task_type == 'deep' %}text-primary border-primary{% else %}text-muted border-line{% endif %}">{{ task.get_task_type_display }}</span>
+
+  <div id="busy-note" class="hidden mt-4 rounded-[10px] border border-warning bg-bg px-4 py-3 text-sm text-ink">
+    عندك جلسة جارية لمهمة أخرى:
+    <a id="busy-link" href="#" class="text-primary underline"></a>
+  </div>
+
+  <div class="relative w-64 h-64 mx-auto mt-6">
+    <svg class="w-full h-full -rotate-90" viewBox="0 0 200 200" aria-hidden="true">
+      <circle cx="100" cy="100" r="90" fill="none" stroke-width="10" class="stroke-line"></circle>
+      <circle id="timer-ring" cx="100" cy="100" r="90" fill="none" stroke-width="10" stroke-linecap="round" class="stroke-primary"></circle>
+    </svg>
+    <div id="timer-display" dir="ltr" role="timer" class="absolute inset-0 flex items-center justify-center text-5xl font-semibold tracking-wider text-ink">25:00</div>
+  </div>
+
+  <div class="form-field mt-6 text-start">
+    <label for="duration-input" class="block mb-1 text-sm text-muted">المدة بالدقائق (من 1 إلى 240)</label>
+    <input type="number" id="duration-input" value="25" min="1" max="240">
+  </div>
+
+  <div class="mt-4 flex gap-3">
+    <button type="button" id="start-btn" class="flex-1 inline-flex items-center justify-center h-11 rounded-[10px] bg-primary text-bg font-semibold hover:bg-primary-hover transition-colors focus-visible:ring-2 focus-visible:ring-primary disabled:opacity-50 disabled:cursor-not-allowed">ابدأ</button>
+    <button type="button" id="finish-btn" disabled class="flex-1 inline-flex items-center justify-center h-11 rounded-[10px] border border-line text-ink hover:bg-surface-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">إنهاء وحفظ</button>
+  </div>
+
+  <p id="finish-hint" class="hidden mt-3 text-xs text-muted">زر الإنهاء والحفظ يتفعّل بعد مرور دقيقة. وتُحفظ الجلسة تلقائياً عند انتهاء الوقت.</p>
+
+  <button type="button" id="cancel-btn" class="hidden mt-3 text-sm text-danger underline">إلغاء بدون حفظ</button>
+
+  <p class="mt-4 text-xs text-muted">يمكنك مغادرة هذه الصفحة والوقت يستمر. ستجده في صفحة الجلسات.</p>
+
+  <form id="save-form" method="post" action="{% url 'focus_save' task.pk %}">
+    {% csrf_token %}
+    <input type="hidden" name="minutes" id="minutes-field">
+  </form>
+
+  <div class="mt-4 flex justify-center gap-4 text-sm">
+    <a href="{% url 'task_list' %}" class="text-muted underline">المهام</a>
+    <a href="{% url 'session_list' %}" class="text-primary underline">الجلسات</a>
+  </div>
+</div>
+
+<script>
+  var TASK_ID = {{ task.pk }};
+  var TASK_TITLE = "{{ task.title|escapejs }}";
+  var FOCUS_URL = "{% url 'focus_start' task.pk %}";
+  var STORE_KEY = 'df_active';
+  var CIRC = 2 * Math.PI * 90;
+
+  var display = document.getElementById('timer-display');
+  var ring = document.getElementById('timer-ring');
+  var durationInput = document.getElementById('duration-input');
+  var startBtn = document.getElementById('start-btn');
+  var finishBtn = document.getElementById('finish-btn');
+  var cancelBtn = document.getElementById('cancel-btn');
+  var hint = document.getElementById('finish-hint');
+  var busyNote = document.getElementById('busy-note');
+  var busyLink = document.getElementById('busy-link');
+  var saveForm = document.getElementById('save-form');
+  var minutesField = document.getElementById('minutes-field');
+
+  var startTime = null;
+  var endTime = null;
+  var totalMs = 0;
+  var minutesPlanned = 0;
+  var intervalId = null;
+  var submitted = false;
+
+  ring.style.strokeDasharray = CIRC;
+
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+function render(ms) {
+    var total = Math.max(0, Math.ceil(ms / 1000));
+    display.textContent = pad(Math.floor(total / 60)) + ':' + pad(total % 60);
+    ring.style.strokeDashoffset = CIRC * (1 - Math.max(0, ms) / totalMs);
+  }
+
+  function getDuration() {
+    var v = parseInt(durationInput.value, 10);
+    if (isNaN(v) || v < 1) { v = 1; }
+    if (v > 240) { v = 240; }
+    return v;
+  }
+
+  function readActive() {
+    try { return JSON.parse(localStorage.getItem(STORE_KEY)); } catch (e) { return null; }
+  }
+
+  function clearActive() {
+    localStorage.removeItem(STORE_KEY);
+  }
+
+  function showIdle() {
+    totalMs = getDuration() * 60000;
+    render(totalMs);
+  }
+
+  function submit(minutes) {
+    if (submitted) { return; }
+    submitted = true;
+    clearInterval(intervalId);
+    clearActive();
+    minutesField.value = minutes;
+    saveForm.submit();
+  }
+
+  function tick() {
+    var now = Date.now();
+    var remaining = endTime - now;
+    if (remaining <= 0) {
+      render(0);
+      submit(minutesPlanned);
+      return;
+    }
+    if (now - startTime >= 60000) {
+      finishBtn.disabled = false;
+      hint.classList.add('hidden');
+    }
+    render(remaining);
+  }
+
+  function beginTimer(start, end, minutes) {
+    startTime = start;
+    endTime = end;
+    totalMs = end - start;
+    minutesPlanned = minutes;
+    startBtn.disabled = true;
+    durationInput.disabled = true;
+    finishBtn.disabled = true;
+    cancelBtn.classList.remove('hidden');
+    hint.classList.remove('hidden');
+    tick();
+    intervalId = setInterval(tick, 1000);
+  }
+
+  durationInput.addEventListener('input', function () {
+    if (startTime === null) { showIdle(); }
+  });
+
+  startBtn.addEventListener('click', function () {
+    var minutes = getDuration();
+    var start = Date.now();
+    var end = start + minutes * 60000;
+    durationInput.value = minutes;
+    localStorage.setItem(STORE_KEY, JSON.stringify({
+      taskId: TASK_ID,
+      title: TASK_TITLE,
+      url: FOCUS_URL,
+      start: start,
+      end: end,
+      minutes: minutes
+    }));
+    beginTimer(start, end, minutes);
+  });
+
+  finishBtn.addEventListener('click', function () {
+    var elapsed = Math.round((Date.now() - startTime) / 60000);
+    if (elapsed < 1) { return; }
+    submit(Math.min(elapsed, 240));
+  });
+
+  cancelBtn.addEventListener('click', function () {
+    if (confirm('إلغاء الجلسة بدون حفظ؟')) {
+      clearActive();
+      location.reload();
+    }
+  });
+
+  var active = readActive();
+  if (active && active.taskId === TASK_ID) {
+    durationInput.value = active.minutes;
+    beginTimer(active.start, active.end, active.minutes);
+  } else if (active) {
+    busyLink.textContent = active.title;
+    if (active.url && active.url.indexOf('/') === 0) { busyLink.href = active.url; }
+    busyNote.classList.remove('hidden');
+    startBtn.disabled = true;
+    showIdle();
+  } else {
+    showIdle();
+  }
+</script>
+{% endblock %}
