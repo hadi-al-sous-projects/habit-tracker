@@ -19,7 +19,7 @@
 
 ## خطوات التشغيل
 
-    git clone <repo-url>
+    git clone https://github.com/hadi-al-sous-projects/habit-tracker.git
     cd deepfocus
     python3 -m venv venv
     source venv/bin/activate
